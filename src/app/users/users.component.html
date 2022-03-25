@@ -1,0 +1,241 @@
+<ngx-loading-bar></ngx-loading-bar>
+
+<div class="container-fluid my-5">
+    <div class="row my-5">
+        <div  class="col-md-12 col-sm-12">
+            <div class="content my-3">
+                <div class="py-2">
+                    <button [@fadeInLeft]=" { value: fadeInLeft, params: { timing: myTiming ||2, delay: myDelay || 0 } }" (click)="startLoading();stopLoading()" class=" btn btn-info my-2 float-right" type="button"  data-toggle="modal" data-target="#add">
+                    <i class="fa-solid fa-address-card"></i> Add User
+                </button>
+                </div>
+                <div [@fadeIn]=" { value: fadeIn, params: { timing: myTiming ||3, delay: myDelay || 0 } }" class="search">
+                  <input (keyup)="search($event)" class="form-control my-2 bg-dark text-light" type="text" placeholder="Enter To Search .......">
+                </div>
+
+                <div *ngIf="!isLoading" class="col-md-12 text-center my-20" >
+                  <h5 class="text-light">  Loading Data.....  </h5>        
+                  <span class="svg-icon svg-icon-5hx spinner-border text-primary"></span>
+                </div>
+           
+
+                <table [@fadeIn]=" { value: fadeIn, params: { timing: myTiming ||3, delay: myDelay || 0 } }"  class=" table text-light text-center">
+                 
+                    <thead>
+                        <tr>
+                      <th>Index</th>
+                      <th>Name</th>
+                      <th>Phone</th>
+                      <th>Email</th>
+                      <th>Country</th>
+                      <th>BirthDay</th>
+                      <th>CreatedAt</th>
+                      <th>Edit</th>
+                      <th>Delete</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                      <tr *ngFor="let user of allUsersFilter|paginate: {itemsPerPage:6, currentPage:p} ;let i = index" class=" text-white">
+                    
+                      <td>{{i}}</td>
+                      <td class=" text-center">
+                        <div class="userimage">  
+                          <Span class=" mr-2 name">{{user.name}}</Span>
+                           <img class="mr-5 " [src]="user.image" alt="">
+                        </div>
+                       </td>            
+                      <td>{{user.phone}}</td>
+                      <td>{{user.email}}</td>
+                      <td>{{user.country}}</td>
+                      <td>{{user.birthday}}</td>
+                      <td>{{user.createdAt}}</td>
+                      <td><i (click)="getId(user.id);setValueById()" class="fa-solid fa-user-pen text-success curoser-pointer" data-toggle="modal" data-target="#edit"></i></td>
+                      <td><i (click)="getId(user.id)"class="fa-solid fa-trash-can text-danger"  data-toggle="modal" data-target="#delete"></i></td>
+                      </tr>
+
+                    </tbody>
+                
+                  </table>
+               
+                  <pagination-controls [@fadeIn]="fadeIn" class="text-light text-right" (pageChange)="p = $event"></pagination-controls>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<!----------------- Add User --------------- -->
+  <!-- Modal -->
+  <div  class="modal fade  " id="add" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl ">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Add User</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="addUser" (ngSubmit)="addedData()">
+
+         <div class="container-fluid text-info">
+           <div class="row ">
+             
+              <div class="col-md-4 ">
+               <div class="content-1">
+                 <label for="add-name">Add Name <span *ngIf="addUser.touched " ><i class="fa-solid fa-check text-success"></i></span></label>
+            
+                 <input class="form-control" formControlName="name" type="text" id="add-name">
+               </div>
+             </div>
+             <!--  -->
+             <div  class="col-md-4">
+              <div class="content-1">
+                <label for="add-phone">Add Phone   </label>
+                <input class="form-control" formControlName="phone" type="number" id="add-phone" >
+              
+              </div>
+            </div>
+            <!--  -->
+            <div class="col-md-4">
+              <div class="content-1">
+                <label for="add-email">Add Email </label>
+                <input class="form-control" formControlName="email" type="email" id="add-email">
+              </div>
+            </div>
+            <!--  -->
+            <div class="col-md-4">
+              <div class="content-1">
+                <label for="add-country">Add Country </label>
+                <input class="form-control" formControlName="country" type="text" id="add-country">
+              </div>
+            </div>
+            <!--  -->
+            <div class="col-md-4">
+              <div class="content-1">
+                <label for="add-birthdate">Add Birth_Date </label>
+                <input class="form-control" formControlName="birthday" type="date" id="add-birthdate">
+              </div>
+            </div>
+            <!--  -->
+            <div class="col-md-4">
+              <div class="content-1">
+                <label for="add-date">Add Date </label>
+                <input class="form-control" formControlName="createdAt" type="datetime-local" id="add-date">
+              </div>
+            </div>
+            <!--  -->
+           
+           
+           </div>
+         </div>
+        </form>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          <button  (click)="addedData();showSuccess()" type="button" class="btn btn-primary" >Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!----------------- Edite User --------------- -->
+   <!-- Modal -->
+   <div  class="modal fade  " id="edit" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl ">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Edit User</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="updateUser" (ngSubmit)="editData()">
+
+         <div class="container-fluid text-info">
+           <div class="row ">
+             
+              <div class="col-md-4 ">
+               <div class="content-1">
+                 <label for="add-name">Edit Name <span *ngIf="addUser.touched " ><i class="fa-solid fa-check text-success"></i></span></label>
+            
+                 <input class="form-control" formControlName="name" type="text" id="add-name">
+               </div>
+             </div>
+             <!--  -->
+             <div  class="col-md-4">
+              <div class="content-1">
+                <label for="add-phone">Edit Phone   </label>
+                <input class="form-control" formControlName="phone" type="number" id="Edit-phone" >
+              
+              </div>
+            </div>
+            <!--  -->
+            <div class="col-md-4">
+              <div class="content-1">
+                <label for="Edit-email">Edit Email </label>
+                <input class="form-control" formControlName="email" type="email" id="Edit-email">
+              </div>
+            </div>
+            <!--  -->
+            <div class="col-md-4">
+              <div class="content-1">
+                <label for="Edit-country">Edit Country </label>
+                <input class="form-control" formControlName="country" type="text" id="Edit-country">
+              </div>
+            </div>
+            <!--  -->
+            <div class="col-md-4">
+              <div class="content-1">
+                <label for="Edit-birthdate">Edit Birth_Date </label>
+                <input class="form-control" formControlName="birthday" type="date" id="Edit-birthdate">
+              </div>
+            </div>
+            <!--  -->
+            <div class="col-md-4">
+              <div class="content-1">
+                <label for="Edit-date">Edit Date </label>
+                <input class="form-control" formControlName="createdAt" type="datetime-local" id="add-date">
+              </div>
+            </div>
+            <!--  -->
+           
+           
+           </div>
+         </div>
+        </form>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          <button  (click)="addedData()" type="button" class="btn btn-primary" >Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- ----------Delete User--------- -->
+
+<div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Delete User</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-danger">
+        Are You Sure To Delete This User ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        <button (click)="deletedData();showDelete()" type="submit" class="btn btn-danger">Confirm Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ------------------------ -->

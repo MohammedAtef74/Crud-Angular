@@ -1,0 +1,163 @@
+<ngx-loading-bar></ngx-loading-bar>
+
+<div class="container-fluid my-5">
+    <div class="row my-5">
+        <div  class="col-md-12 col-sm-12">
+            <div class="content my-3">
+                <div class="py-2">
+                    <button [@zoomIn]="zoomIn" (click)="startLoading();stopLoading()" class=" btn btn-info my-2 float-right" type="button"  data-toggle="modal" data-target="#add">
+                    <i class="fa-solid fa-address-card"></i> Add Client
+                </button>
+                </div>
+                <div [@zoomIn]="zoomIn" class="search">
+                  <input  class="form-control my-2 bg-dark text-light" type="text" placeholder="Enter To Search .......">
+                </div>
+
+                <div *ngIf="!isLoading" class="col-md-12 text-center my-20" >
+                  <h5 class="text-light">  Loading Data.....  </h5>        
+                  <span class="svg-icon svg-icon-5hx spinner-border text-primary"></span>
+                </div>
+      
+                <table [@zoomIn]="zoomIn"  class=" table text-light text-center">
+                 
+                    <thead>
+                        <tr>
+                      <th>Index</th>
+                      <th>Name</th>
+                      <th>Gender</th>
+                      <th>Email</th>
+                      <th>CreatedAt</th>
+                      <th>Edit</th>
+                      <th>Delete</th>
+                    </tr>
+                    </thead>
+                    
+                    <tbody>
+                      <tr *ngFor="let client of allClients|paginate: {itemsPerPage:6, currentPage:p} ;let i = index" class=" text-white">
+                    
+                      <td>{{i}}</td>
+                      <td class="">
+                        <div class="userimage">  
+                          <Span class=" mr-3 name">{{client.name}}</Span>
+                           <img class="mr-5 " [src]="client.img" alt="">
+                        </div>
+                       </td>            
+                      <td>{{client.gender}}</td>
+                      <td>{{client.email}}</td>                
+                      <td>{{client.createdAt}}</td>
+                      <td><i class="fa-solid fa-user-pen text-success curoser-pointer"></i></td>
+                      <td><i (click)="getId(client.id)" class="fa-solid fa-trash-can text-danger"  data-toggle="modal" data-target="#delete"></i></td>
+                      </tr>
+
+                    </tbody> 
+                
+                  </table>
+            
+                  <pagination-controls [@zoomIn]="zoomIn" class="text-light text-right" (pageChange)="p = $event"></pagination-controls>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!----------------- Add User --------------- -->
+  <!-- Modal -->
+  <div  class="modal fade " id="add" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Add Client</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="addClient" (ngSubmit)="addData()"> 
+
+          <div class="container-fluid text-info">
+           <div class="row ">
+             
+              <div class="col-md-4 ">
+               <div class="content-1">
+                 <label for="add-name">Add Name</label>
+                 <input class="form-control" formControlName="name" type="text" id="add-name">
+               </div>
+            
+             </div> 
+               
+              <div class="col-md-4">
+              <div class="content-1">
+                <label for="add-phone">Add Email</label>
+                <input class="form-control" formControlName="email" type="email" id="add-email">
+              </div>
+            </div>
+             
+             <div class="col-md-4">
+              <div class="content-3">
+                <label for="add-img">Add Img</label>
+                <!-- <img [src]="urlImg" alt="" height="60px" width="50px"> -->
+                <input class="form-control" formControlName="img" type="file" id="add-img">
+              </div>
+            </div> 
+              
+            <!-- 
+                 (change)="onSelect($event)"
+                 style="display: none;"
+                 accept="image/*"
+             -->
+             <div class="col-md-4">
+              <div class="content-1">
+                <label for="add-gender">Add Gender</label>
+                <input class="form-control" formControlName="gender" type="text" id="add-gender">
+              </div>
+            </div> 
+              
+   
+             <div class="col-md-4">
+              <div class="content-1">
+                <label for="add-date">Add Date</label>
+                <input class="form-control" formControlName="createdAt" type="datetime-local" id="add-date">
+              </div>
+            </div> 
+              
+           
+           
+            </div>
+         </div>
+        </form>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          <button (click)="addData()" type="button" class="btn btn-primary">Save</button>
+        </div>
+        <div *ngIf="!isLoading" class="col-md-12 text-center my-20" >
+          <h5 class="text-info">  Loading Data.....  </h5>        
+          <span class="svg-icon svg-icon-5hx spinner-border text-primary"></span>
+        </div>
+      </div>
+    </div>
+  </div> 
+
+    <!-- ----------Delete--------- -->
+
+<div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Delete User</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-danger">
+        Are You Sure To Delete This User ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        <button (click)="deletedData()" type="submit" class="btn btn-danger">Confirm Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
